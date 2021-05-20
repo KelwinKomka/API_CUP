@@ -1,0 +1,491 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 10.6
+-- Dumped by pg_dump version 13.0
+
+-- Started on 2021-05-19 16:23:17
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 4 (class 2615 OID 309578)
+-- Name: cvc; Type: SCHEMA; Schema: -; Owner: cvc
+--
+
+CREATE SCHEMA cvc;
+
+
+ALTER SCHEMA cvc OWNER TO cvc;
+
+SET default_tablespace = '';
+
+--
+-- TOC entry 200 (class 1259 OID 309605)
+-- Name: dev; Type: TABLE; Schema: cvc; Owner: cvc
+--
+
+CREATE TABLE cvc.dev (
+    devoid integer NOT NULL,
+    nome character varying(50) NOT NULL,
+    id character varying(20),
+    senha character varying(20) NOT NULL,
+    habilitado character(1) DEFAULT 'F'::bpchar,
+    CONSTRAINT devhabilitadock CHECK ((habilitado = ANY (ARRAY['F'::bpchar, 'T'::bpchar])))
+);
+
+
+ALTER TABLE cvc.dev OWNER TO cvc;
+
+--
+-- TOC entry 202 (class 1259 OID 309687)
+-- Name: dev_devoid; Type: SEQUENCE; Schema: cvc; Owner: cvc
+--
+
+CREATE SEQUENCE cvc.dev_devoid
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cvc.dev_devoid OWNER TO cvc;
+
+--
+-- TOC entry 3735 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: dev_devoid; Type: SEQUENCE OWNED BY; Schema: cvc; Owner: cvc
+--
+
+ALTER SEQUENCE cvc.dev_devoid OWNED BY cvc.dev.devoid;
+
+
+--
+-- TOC entry 203 (class 1259 OID 309721)
+-- Name: itensversao_itensversaooid; Type: SEQUENCE; Schema: cvc; Owner: cvc
+--
+
+CREATE SEQUENCE cvc.itensversao_itensversaooid
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cvc.itensversao_itensversaooid OWNER TO cvc;
+
+--
+-- TOC entry 199 (class 1259 OID 309597)
+-- Name: itensversao; Type: TABLE; Schema: cvc; Owner: cvc
+--
+
+CREATE TABLE cvc.itensversao (
+    itensversaooid integer DEFAULT nextval('cvc.itensversao_itensversaooid'::regclass) NOT NULL,
+    versaooid integer NOT NULL,
+    devoid integer NOT NULL,
+    ticketoid character varying(50) NOT NULL,
+    projectoid character varying(50) NOT NULL,
+    modulo character varying(30) NOT NULL,
+    aplicacao character varying(30) NOT NULL,
+    release integer NOT NULL,
+    descricao character varying(1000),
+    teste character varying(1000),
+    data timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE cvc.itensversao OWNER TO cvc;
+
+--
+-- TOC entry 204 (class 1259 OID 309723)
+-- Name: script_scriptoid; Type: SEQUENCE; Schema: cvc; Owner: cvc
+--
+
+CREATE SEQUENCE cvc.script_scriptoid
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cvc.script_scriptoid OWNER TO cvc;
+
+--
+-- TOC entry 207 (class 1259 OID 309791)
+-- Name: script; Type: TABLE; Schema: cvc; Owner: cvc
+--
+
+CREATE TABLE cvc.script (
+    scriptoid integer DEFAULT nextval('cvc.script_scriptoid'::regclass) NOT NULL,
+    versaooid integer NOT NULL,
+    tiposcriptoid integer NOT NULL,
+    descricao character varying(100) NOT NULL,
+    codigo bytea NOT NULL,
+    skip character(1) DEFAULT 'F'::bpchar NOT NULL,
+    tipobanco character varying(15) NOT NULL,
+    oldcodigo bytea,
+    ordem integer NOT NULL,
+    banco character varying(20),
+    CONSTRAINT scriptskipck CHECK ((skip = ANY (ARRAY['F'::bpchar, 'T'::bpchar])))
+);
+
+
+ALTER TABLE cvc.script OWNER TO cvc;
+
+--
+-- TOC entry 206 (class 1259 OID 309731)
+-- Name: tiposcript_tiposcriptoid; Type: SEQUENCE; Schema: cvc; Owner: cvc
+--
+
+CREATE SEQUENCE cvc.tiposcript_tiposcriptoid
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cvc.tiposcript_tiposcriptoid OWNER TO cvc;
+
+--
+-- TOC entry 201 (class 1259 OID 309618)
+-- Name: tiposcript; Type: TABLE; Schema: cvc; Owner: cvc
+--
+
+CREATE TABLE cvc.tiposcript (
+    tiposcriptoid integer DEFAULT nextval('cvc.tiposcript_tiposcriptoid'::regclass) NOT NULL,
+    ordem integer NOT NULL,
+    descricao character varying(50) NOT NULL
+);
+
+
+ALTER TABLE cvc.tiposcript OWNER TO cvc;
+
+--
+-- TOC entry 205 (class 1259 OID 309727)
+-- Name: versao_versaooid; Type: SEQUENCE; Schema: cvc; Owner: cvc
+--
+
+CREATE SEQUENCE cvc.versao_versaooid
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE cvc.versao_versaooid OWNER TO cvc;
+
+--
+-- TOC entry 198 (class 1259 OID 309579)
+-- Name: versao; Type: TABLE; Schema: cvc; Owner: cvc
+--
+
+CREATE TABLE cvc.versao (
+    versaooid integer DEFAULT nextval('cvc.versao_versaooid'::regclass) NOT NULL,
+    major integer,
+    minor integer,
+    banco integer,
+    data timestamp without time zone NOT NULL,
+    desenvolvimento character(1) DEFAULT 'T'::bpchar NOT NULL,
+    producao character(1) DEFAULT 'F'::bpchar NOT NULL,
+    habilitada character(1) DEFAULT 'T'::bpchar NOT NULL
+);
+
+
+ALTER TABLE cvc.versao OWNER TO cvc;
+
+--
+-- TOC entry 197 (class 1259 OID 309554)
+-- Name: versao; Type: TABLE; Schema: public; Owner: wmsdvlp
+--
+
+CREATE TABLE public.versao (
+    versaoid integer NOT NULL,
+    major integer,
+    minor integer,
+    banco integer,
+    data timestamp without time zone NOT NULL,
+    cup character(1) NOT NULL
+);
+
+
+ALTER TABLE public.versao OWNER TO wmsdvlp;
+
+--
+-- TOC entry 3575 (class 2604 OID 309689)
+-- Name: dev devoid; Type: DEFAULT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.dev ALTER COLUMN devoid SET DEFAULT nextval('cvc.dev_devoid'::regclass);
+
+
+--
+-- TOC entry 3722 (class 0 OID 309605)
+-- Dependencies: 200
+-- Data for Name: dev; Type: TABLE DATA; Schema: cvc; Owner: cvc
+--
+
+COPY cvc.dev (devoid, nome, id, senha, habilitado) FROM stdin;
+21	Carlos	12356	123456	F
+30	Renan	ostrowski1	a	F
+35	TESTE3	TESTE3	123456	F
+34	TESTE4	TESTE2	123456	F
+32	TESTE	TESTE	123456	F
+31	Carlos Muraro	renan	123458	F
+26	Renan Muraro	ostrowski	a	T
+36	Felipe	felipe	a	F
+\.
+
+
+--
+-- TOC entry 3721 (class 0 OID 309597)
+-- Dependencies: 199
+-- Data for Name: itensversao; Type: TABLE DATA; Schema: cvc; Owner: cvc
+--
+
+COPY cvc.itensversao (itensversaooid, versaooid, devoid, ticketoid, projectoid, modulo, aplicacao, release, descricao, teste, data) FROM stdin;
+35	1	31	asd	asdads	Desktop	Coletor	1	Teste	Teste	2020-11-13 11:01:48.246
+36	1	31	dasd	asdas	Desktop	Coletor	2	Teste 2	Teste 2	2020-11-13 11:01:48.246
+37	2	21	asdas	asdasd	Desktop	Coletor	1	Teste 3	Teste 3	2020-11-13 11:01:48.246
+38	1	31	dasdas	sadasd	Web	CyberWeb	1	Teste 1	Teste 2	2020-11-13 11:01:48.246
+39	1	31	dasdas	sadasd	Web	CyberWeb	2	Teste 1	Teste 2	2020-11-13 11:01:48.246
+40	1	21	asdasd	asdas	Desktop	Coletor	3	asdasd	dasd	2020-11-13 11:01:48.246
+\.
+
+
+--
+-- TOC entry 3729 (class 0 OID 309791)
+-- Dependencies: 207
+-- Data for Name: script; Type: TABLE DATA; Schema: cvc; Owner: cvc
+--
+
+COPY cvc.script (scriptoid, versaooid, tiposcriptoid, descricao, codigo, skip, tipobanco, oldcodigo, ordem, banco) FROM stdin;
+54	2	1	kjljkl	\\x6b6c6a6b6c6a	F	Oracle	\N	2	\N
+53	2	1	asfasfa	\\x66647366647364	F	Oracle	\N	1	\N
+47	2	1	dfsdfsdfs	\\x666473	F	Postgres	\N	4	\N
+48	2	2	asdasfasf	\\x66617366617366	F	Postgres	\N	1	\N
+45	2	2	qweqw	\\x71776571	F	Postgres	\N	3	\N
+49	2	2	nbvnvbn	\\x626e76	F	Postgres	\N	2	\N
+\.
+
+
+--
+-- TOC entry 3723 (class 0 OID 309618)
+-- Dependencies: 201
+-- Data for Name: tiposcript; Type: TABLE DATA; Schema: cvc; Owner: cvc
+--
+
+COPY cvc.tiposcript (tiposcriptoid, ordem, descricao) FROM stdin;
+1	1	Create Table
+2	2	Alter Table
+3	3	Drop Table
+4	4	Create Index
+5	5	Drop Index
+6	6	Create View
+7	7	Drop View
+8	8	Create Sequence
+9	9	Drop Sequence
+10	10	Create Type
+11	11	Drop Type
+12	12	Create Function
+13	13	Alter Function
+14	14	Drop Function
+15	15	Create Procedure
+16	16	Alter Procedure
+17	17	Drop Procedure
+18	18	Create Trigger
+19	19	Alter Trigger
+20	20	Drop Trigger
+21	21	Create Link Trigger
+22	22	Insert
+23	23	Update
+24	24	Delete
+\.
+
+
+--
+-- TOC entry 3720 (class 0 OID 309579)
+-- Dependencies: 198
+-- Data for Name: versao; Type: TABLE DATA; Schema: cvc; Owner: cvc
+--
+
+COPY cvc.versao (versaooid, major, minor, banco, data, desenvolvimento, producao, habilitada) FROM stdin;
+5	9	6	6	2020-12-30 00:00:00	F	F	T
+4	9	6	5	2020-12-30 00:00:00	F	F	T
+7	9	6	8	2020-12-30 00:00:00	F	F	T
+6	9	6	7	2020-12-30 00:00:00	F	F	T
+8	9	6	9	2020-12-30 00:00:00	F	F	T
+9	9	6	10	2020-12-30 00:00:00	F	F	T
+10	9	6	11	2020-12-30 00:00:00	F	T	F
+2	9	6	3	2021-01-15 00:00:00	F	F	T
+11	9	6	11	2020-12-30 00:00:00	T	F	F
+1	9	6	2	2020-12-30 00:00:00	F	F	T
+3	9	6	4	2020-12-30 00:00:00	F	F	T
+\.
+
+
+--
+-- TOC entry 3719 (class 0 OID 309554)
+-- Dependencies: 197
+-- Data for Name: versao; Type: TABLE DATA; Schema: public; Owner: wmsdvlp
+--
+
+COPY public.versao (versaoid, major, minor, banco, data, cup) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3736 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: dev_devoid; Type: SEQUENCE SET; Schema: cvc; Owner: cvc
+--
+
+SELECT pg_catalog.setval('cvc.dev_devoid', 36, true);
+
+
+--
+-- TOC entry 3737 (class 0 OID 0)
+-- Dependencies: 203
+-- Name: itensversao_itensversaooid; Type: SEQUENCE SET; Schema: cvc; Owner: cvc
+--
+
+SELECT pg_catalog.setval('cvc.itensversao_itensversaooid', 40, true);
+
+
+--
+-- TOC entry 3738 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: script_scriptoid; Type: SEQUENCE SET; Schema: cvc; Owner: cvc
+--
+
+SELECT pg_catalog.setval('cvc.script_scriptoid', 57, true);
+
+
+--
+-- TOC entry 3739 (class 0 OID 0)
+-- Dependencies: 206
+-- Name: tiposcript_tiposcriptoid; Type: SEQUENCE SET; Schema: cvc; Owner: cvc
+--
+
+SELECT pg_catalog.setval('cvc.tiposcript_tiposcriptoid', 24, true);
+
+
+--
+-- TOC entry 3740 (class 0 OID 0)
+-- Dependencies: 205
+-- Name: versao_versaooid; Type: SEQUENCE SET; Schema: cvc; Owner: cvc
+--
+
+SELECT pg_catalog.setval('cvc.versao_versaooid', 11, true);
+
+
+--
+-- TOC entry 3589 (class 2606 OID 309609)
+-- Name: dev dev_pkey; Type: CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.dev
+    ADD CONSTRAINT dev_pkey PRIMARY KEY (devoid);
+
+
+--
+-- TOC entry 3587 (class 2606 OID 309604)
+-- Name: itensversao itensversao_pkey; Type: CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.itensversao
+    ADD CONSTRAINT itensversao_pkey PRIMARY KEY (itensversaooid);
+
+
+--
+-- TOC entry 3593 (class 2606 OID 309798)
+-- Name: script script_pkey; Type: CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.script
+    ADD CONSTRAINT script_pkey PRIMARY KEY (scriptoid);
+
+
+--
+-- TOC entry 3591 (class 2606 OID 309622)
+-- Name: tiposcript tiposcript_pkey; Type: CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.tiposcript
+    ADD CONSTRAINT tiposcript_pkey PRIMARY KEY (tiposcriptoid);
+
+
+--
+-- TOC entry 3585 (class 2606 OID 309583)
+-- Name: versao versao_pkey; Type: CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.versao
+    ADD CONSTRAINT versao_pkey PRIMARY KEY (versaooid);
+
+
+--
+-- TOC entry 3583 (class 2606 OID 309558)
+-- Name: versao versao_pkey; Type: CONSTRAINT; Schema: public; Owner: wmsdvlp
+--
+
+ALTER TABLE ONLY public.versao
+    ADD CONSTRAINT versao_pkey PRIMARY KEY (versaoid);
+
+
+--
+-- TOC entry 3595 (class 2606 OID 309664)
+-- Name: itensversao devdevoidfk; Type: FK CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.itensversao
+    ADD CONSTRAINT devdevoidfk FOREIGN KEY (devoid) REFERENCES cvc.dev(devoid);
+
+
+--
+-- TOC entry 3596 (class 2606 OID 309800)
+-- Name: script scripttiposcriptoidfk; Type: FK CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.script
+    ADD CONSTRAINT scripttiposcriptoidfk FOREIGN KEY (tiposcriptoid) REFERENCES cvc.tiposcript(tiposcriptoid);
+
+
+--
+-- TOC entry 3594 (class 2606 OID 309654)
+-- Name: itensversao versaoversaooidfk; Type: FK CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.itensversao
+    ADD CONSTRAINT versaoversaooidfk FOREIGN KEY (versaooid) REFERENCES cvc.versao(versaooid);
+
+
+--
+-- TOC entry 3597 (class 2606 OID 309805)
+-- Name: script versaoversaooidfk; Type: FK CONSTRAINT; Schema: cvc; Owner: cvc
+--
+
+ALTER TABLE ONLY cvc.script
+    ADD CONSTRAINT versaoversaooidfk FOREIGN KEY (versaooid) REFERENCES cvc.versao(versaooid);
+
+
+-- Completed on 2021-05-19 16:23:18
+
+--
+-- PostgreSQL database dump complete
+--
+
