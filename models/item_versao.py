@@ -1,6 +1,8 @@
 class Item_Versao:
     def __init__(self):
-        self.usuario = ''
+        self.versao_id = 0
+        self.dev_id = 0
+        self.dev = ''
         self.ticket = ''
         self.projeto = ''
         self.modulo = ''
