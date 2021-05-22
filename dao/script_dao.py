@@ -21,14 +21,24 @@ def inserir_script(script):
         logging.error(error)
         return str(error)
 
-def buscar_scripts(versao_id):
+def buscar_scripts(versao_id, banco, tipo_script = None):
     try:
         cur = conn.cursor()
-        cur.execute("SELECT t.DESCRICAO TIPOSCRIPT, s.DESCRICAO, s.CODIGO, s.SKIP, "+
-                           "s.TIPOBANCO, s.OLDCODIGO, s.BANCO "+
-                      "from SCRIPT s inner join TIPOSCRIPT t on s.TIPOSCRIPTOID = t.TIPOSCRIPTOID "+
-                     "where s.VERSAOOID = %s::bigint "+
-                     "order by t.ORDEM", (versao_id,))
+        if tipo_script:
+            cur.execute("SELECT t.DESCRICAO TIPOSCRIPT, s.DESCRICAO, s.CODIGO, s.SKIP, "+
+                               "s.TIPOBANCO, s.OLDCODIGO, s.BANCO "+
+                          "from SCRIPT s inner join TIPOSCRIPT t on s.TIPOSCRIPTOID = t.TIPOSCRIPTOID "+
+                         "where s.VERSAOOID = %s::bigint "+
+                           "and s.TIPOBANCO = %s "+
+                           "and t.DESCRICAO = %s "+
+                         "order by t.ORDEM", (versao_id, banco, tipo_script))
+        else:
+            cur.execute("SELECT t.DESCRICAO TIPOSCRIPT, s.DESCRICAO, s.CODIGO, s.SKIP, "+
+                               "s.TIPOBANCO, s.OLDCODIGO, s.BANCO "+
+                          "from SCRIPT s inner join TIPOSCRIPT t on s.TIPOSCRIPTOID = t.TIPOSCRIPTOID "+
+                         "where s.VERSAOOID = %s::bigint "+
+                           "and s.TIPOBANCO = %s "+
+                         "order by t.ORDEM", (versao_id, banco))
         scripts_data = cur.fetchall()
         cur.close()
 
